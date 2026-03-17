@@ -54,17 +54,18 @@ jq --version
 
 ```bash
 # Set Vault version (check https://releases.hashicorp.com/vault/ for latest)
-export VAULT_VERSION="1.15.4"
-
+#export VAULT_VERSION="1.15.4"
+sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+sudo yum -y install vault-enterprise
 # Download Vault
-cd /tmp
-wget https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_amd64.zip
+# cd /tmp
+# wget https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_amd64.zip
 
 # Verify download
-ls -lh vault_${VAULT_VERSION}_linux_amd64.zip
+# ls -lh vault_${VAULT_VERSION}_linux_amd64.zip
 
 # Unzip Vault binary
-unzip vault_${VAULT_VERSION}_linux_amd64.zip
+# unzip vault_${VAULT_VERSION}_linux_amd64.zip
 
 # Move to system binary directory
 sudo mv vault /usr/local/bin/
