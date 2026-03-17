@@ -221,7 +221,7 @@ sudo chown vault:vault /etc/vault.d/vault.hcl
 sudo chmod 640 /etc/vault.d/vault.hcl
 
 # Verify configuration syntax
-sudo -u vault /usr/local/bin/vault server -config=/etc/vault.d/vault.hcl -test
+sudo -u vault /usr/local/bin/vault server -config=/etc/vault.d/vault.hcl 
 # Should output: "Configuration is valid!"
 ```
 
