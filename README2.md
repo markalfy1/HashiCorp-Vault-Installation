@@ -22,7 +22,7 @@ This comprehensive guide covers installing HashiCorp Vault on RHEL 9 with HTTPS/
 - RHEL 9 VM with root or sudo access
 - Internet connectivity
 - Minimum 2 CPU cores, 4GB RAM, 20GB disk space
-- Static IP address (e.g., 9.46.67.28)
+- Static IP address (e.g., <your VM's IP>)
 
 ---
 
@@ -32,7 +32,7 @@ This comprehensive guide covers installing HashiCorp Vault on RHEL 9 with HTTPS/
 
 ```bash
 # SSH into your RHEL 9 VM
-ssh root@9.46.67.28
+ssh root@<your VM's IP>
 
 # Update system packages
 sudo yum update -y
@@ -155,7 +155,7 @@ sudo openssl genrsa -out vault-key.pem 2048
 
 # Generate certificate signing request (CSR)
 sudo openssl req -new -key vault-key.pem -out vault.csr \
-  -subj "/C=US/ST=State/L=City/O=Organization/CN=9.46.67.28"
+  -subj "/C=US/ST=State/L=City/O=Organization/CN=<your VM's IP>"
 
 # Generate self-signed certificate (valid for 365 days)
 sudo openssl x509 -req -days 365 -in vault.csr \
@@ -191,10 +191,10 @@ listener "tcp" {
 }
 
 # API address - IMPORTANT: Use https://
-api_addr = "https://9.46.67.28:8200"
+api_addr = "https://<your VM's IP>:8200"
 
 # Cluster address
-cluster_addr = "https://9.46.67.28:8201"
+cluster_addr = "https://<your VM's IP>:8201"
 
 # Enable UI
 ui = true
@@ -295,7 +295,7 @@ sudo ss -tlnp | grep 8200
 
 ```bash
 # Set environment variables for HTTPS
-export VAULT_ADDR='https://9.46.67.28:8200'
+export VAULT_ADDR='https://<your VM's IP>:8200'
 export VAULT_SKIP_VERIFY=true  # For self-signed certificates
 
 # Verify
@@ -304,7 +304,7 @@ echo $VAULT_SKIP_VERIFY
 
 # Make permanent for current user
 cat >> ~/.bashrc <<'EOF'
-export VAULT_ADDR='https://9.46.67.28:8200'
+export VAULT_ADDR='https://<your VM's IP>:8200'
 export VAULT_SKIP_VERIFY=true
 EOF
 
@@ -313,7 +313,7 @@ source ~/.bashrc
 
 # Create system-wide environment file
 sudo tee /etc/profile.d/vault.sh > /dev/null <<'EOF'
-export VAULT_ADDR='https://9.46.67.28:8200'
+export VAULT_ADDR='https://<your VM's IP>:8200'
 export VAULT_SKIP_VERIFY=true
 EOF
 
@@ -329,7 +329,7 @@ vault status
 # Should show Vault status (sealed is normal)
 
 # Test with curl
-curl -k https://9.46.67.28:8200/v1/sys/health
+curl -k https://<your VM's IP>:8200/v1/sys/health
 # Should return JSON response
 ```
 
@@ -364,11 +364,11 @@ Client sent an HTTP request to an HTTPS server.
 ```bash
 # Your VAULT_ADDR is set to HTTP but Vault is running HTTPS
 # Update environment variable
-export VAULT_ADDR='https://9.46.67.28:8200'
+export VAULT_ADDR='https://<your VM's IP>:8200'
 export VAULT_SKIP_VERIFY=true
 
 # Make permanent
-echo 'export VAULT_ADDR="https://9.46.67.28:8200"' >> ~/.bashrc
+echo 'export VAULT_ADDR="https://<your VM's IP>:8200"' >> ~/.bashrc
 echo 'export VAULT_SKIP_VERIFY=true' >> ~/.bashrc
 source ~/.bashrc
 ```
@@ -384,7 +384,7 @@ http: server gave HTTP response to HTTPS client
 ```bash
 # Your VAULT_ADDR is set to HTTPS but Vault is running HTTP
 # Update environment variable
-export VAULT_ADDR='http://9.46.67.28:8200'
+export VAULT_ADDR='http://<your VM's IP>:8200'
 
 # OR enable TLS in Vault configuration (see Step 8)
 ```
@@ -401,7 +401,7 @@ no such file or directory: /opt/vault/tls/vault-cert.pem
 # Generate certificates (see Step 7)
 cd /opt/vault/tls
 sudo openssl genrsa -out vault-key.pem 2048
-sudo openssl req -new -key vault-key.pem -out vault.csr -subj "/C=US/ST=State/L=City/O=Organization/CN=9.46.67.28"
+sudo openssl req -new -key vault-key.pem -out vault.csr -subj "/C=US/ST=State/L=City/O=Organization/CN=<your VM's IP>"
 sudo openssl x509 -req -days 365 -in vault.csr -signkey vault-key.pem -out vault-cert.pem
 sudo chown -R vault:vault /opt/vault/tls
 sudo chmod 600 /opt/vault/tls/vault-key.pem
@@ -488,12 +488,12 @@ vault status
 # Should show Vault status (sealed is normal)
 
 # 5. Test with curl
-curl -k https://9.46.67.28:8200/v1/sys/health
+curl -k https://<your VM's IP>:8200/v1/sys/health
 # Should return JSON
 
 # 6. Verify environment variables
 echo $VAULT_ADDR
-# Should output: https://9.46.67.28:8200
+# Should output: https://<your VM's IP>:8200
 ```
 
 ---
@@ -556,7 +556,7 @@ vault login
 vault token lookup
 
 # Access Vault UI
-# Open browser to: https://9.46.67.28:8200
+# Open browser to: https://<your VM's IP>:8200
 # Login with root token
 ```
 
@@ -657,8 +657,8 @@ vault token revoke <token>      # Revoke token
 | Setting | HTTP | HTTPS |
 |---------|------|-------|
 | tls_disable | 1 | 0 |
-| VAULT_ADDR | http://9.46.67.28:8200 | https://9.46.67.28:8200 |
-| api_addr | http://9.46.67.28:8200 | https://9.46.67.28:8200 |
+| VAULT_ADDR | http://<your VM's IP>:8200 | https://<your VM's IP>:8200 |
+| api_addr | http://<your VM's IP>:8200 | https://<your VM's IP>:8200 |
 | Port | 8200 | 8200 |
 | Certificate Required | No | Yes |
 
@@ -687,7 +687,7 @@ echo $VAULT_SKIP_VERIFY
 
 # Test connection
 vault status
-curl -k https://9.46.67.28:8200/v1/sys/health
+curl -k https://<your VM's IP>:8200/v1/sys/health
 ```
 
 ---
