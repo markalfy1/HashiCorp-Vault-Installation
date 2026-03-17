@@ -1,5 +1,3 @@
-# HashiCorp-Vault-Installation
-
 # Step-by-Step Guide: Installing HashiCorp Vault on RHEL 9 VM
 
 This guide walks you through manually installing HashiCorp Vault on a RHEL 9 virtual machine.
