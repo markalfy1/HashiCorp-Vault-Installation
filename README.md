@@ -54,18 +54,17 @@ jq --version
 
 ```bash
 # Set Vault version (check https://releases.hashicorp.com/vault/ for latest)
-#export VAULT_VERSION="1.15.4"
-sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
-sudo yum -y install vault-enterprise
+export VAULT_VERSION="1.21.4"
+
 # Download Vault
-# cd /tmp
-# wget https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_amd64.zip
+cd /tmp
+wget https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_amd64.zip
 
 # Verify download
-# ls -lh vault_${VAULT_VERSION}_linux_amd64.zip
+ls -lh vault_${VAULT_VERSION}_linux_amd64.zip
 
 # Unzip Vault binary
-# unzip vault_${VAULT_VERSION}_linux_amd64.zip
+unzip vault_${VAULT_VERSION}_linux_amd64.zip
 
 # Move to system binary directory
 sudo mv vault /usr/local/bin/
@@ -75,7 +74,7 @@ sudo chmod +x /usr/local/bin/vault
 
 # Verify installation
 vault version
-# Expected output: Vault v1.15.4 (...)
+# Expected output: Vault v1.21.4 (...)
 
 # Clean up
 rm vault_${VAULT_VERSION}_linux_amd64.zip
@@ -296,7 +295,7 @@ source ~/.bashrc
 
 # Verify
 echo $VAULT_ADDR
-# Expected output: http://127.0.0.1:8200
+# Expected output: http://<your VM's IP>:8200
 ```
 
 ---
@@ -364,8 +363,8 @@ sudo ss -tlnp | grep 8200
 vault status
 # Expected output showing Sealed: true
 
-# Test API endpoint
-curl http://<your VM IP:8200 >/v1/sys/health
+# Test API endpoint (IMPORTANT: Use port 8200, not port 80!)
+curl http://<your VM IP>:8200/v1/sys/health
 # Should return JSON response
 ```
 
@@ -454,7 +453,7 @@ vault status
 # Should show:
 # - Sealed: false
 # - Initialized: true
-# - Version: 1.15.4
+# - Version: 1.21.4
 
 # List enabled secrets engines
 vault secrets list
