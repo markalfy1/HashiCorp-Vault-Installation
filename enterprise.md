@@ -428,8 +428,111 @@ vault operator unseal
 vault status
 # Expected output: Sealed: false
 ```
+---
+## Step 12: Login to Vault
+
+```bash
+# Login with the root token
+vault login
+# Paste the Initial Root Token when prompted
+
+# OR login directly
+vault login hvs.your-root-token-here
+
+# Verify you're logged in
+vault token lookup
+# Should show information about your token
+```
 
 ---
+
+## Step 13: Verify Installation
+
+```bash
+# Check Vault status
+vault status
+# Should show:
+# - Sealed: false
+# - Initialized: true
+# - Version: 1.21.4
+
+# List enabled secrets engines
+vault secrets list
+
+# List enabled auth methods
+vault auth list
+
+# Check system health
+vault read sys/health
+
+# Access Vault UI
+# Open browser to: http://<your-vm-ip>:8200
+# Login with root token
+```
+
+---
+
+## Step 14: Enable Audit Logging (Recommended)
+
+```bash
+# Enable file audit logging
+vault audit enable file file_path=/opt/vault/logs/audit.log
+
+# Verify audit device
+vault audit list
+
+# Check audit log
+sudo tail -f /opt/vault/logs/audit.log
+```
+
+---
+
+## Step 15: Create Your First Secret
+
+```bash
+# Enable KV secrets engine (v2)
+vault secrets enable -path=secret kv-v2
+
+# Write a secret
+vault kv put secret/my-first-secret username="admin" password="supersecret"
+
+# Read the secret
+vault kv get secret/my-first-secret
+
+# List secrets
+vault kv list secret/
+```
+
+---
+
+## Step 16: Secure Your Installation
+
+```bash
+# 1. Revoke root token (after creating other admin users)
+# vault token revoke <root-token>
+
+# 2. Enable additional auth methods
+vault auth enable userpass
+
+# 3. Create admin user
+vault write auth/userpass/users/admin \
+    password=changeme \
+    policies=admin
+
+# 4. Create admin policy
+vault policy write admin - <<EOF
+path "*" {
+  capabilities = ["create", "read", "update", "delete", "list", "sudo"]
+}
+EOF
+
+# 5. Test new admin user
+vault login -method=userpass username=admin password=changeme
+```
+
+---
+
+
 ### Namespaces
 
 ```bash
