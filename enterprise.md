@@ -288,7 +288,7 @@ EOF
 ```bash
 # Create environment file for all users
 sudo tee /etc/profile.d/vault.sh > /dev/null <<'EOF'
-export VAULT_ADDR='http://<your VM's IP>:8200'
+export VAULT_ADDR='https://<your VM's IP>:8200'
 export VAULT_SKIP_VERIFY=true
 EOF
 
@@ -466,7 +466,7 @@ vault auth list
 vault read sys/health
 
 # Access Vault UI
-# Open browser to: http://<your-vm-ip>:8200
+# Open browser to: https://<your-vm-ip>:8200
 # Login with root token
 ```
 
