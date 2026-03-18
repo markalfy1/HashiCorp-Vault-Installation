@@ -139,6 +139,17 @@ sudo chmod 644 /opt/vault/tls/vault-cert.pem
 
 ### Step 4: Configure Vault Enterprise
 
+# Create license file
+```bash
+sudo tee /etc/vault.d/vault.hclic > /dev/null <<'EOF'
+<YOUR-ENTERPRISE-LICENSE-STRING>
+EOF
+
+# **Set proper ownership and permissions **
+sudo chown vault:vault /etc/vault.d/vault.hclic
+sudo chmod 640 /etc/vault.d/vault.hclic
+```
+
 ```bash
 # Create Vault Enterprise configuration
 sudo tee /etc/vault.d/vault.hcl > /dev/null <<'EOF'
@@ -185,7 +196,7 @@ log_level = "Info"
 disable_mlock = true
 
 # Enterprise license path (will be set via API)
-# license_path = "/etc/vault.d/vault.hclic"
+license_path = "/etc/vault.d/vault.hclic"
 
 # Telemetry for monitoring
 telemetry {
@@ -264,44 +275,37 @@ LimitMEMLOCK=infinity
 WantedBy=multi-user.target
 EOF
 
-# Reload and start
-sudo systemctl daemon-reload
-sudo systemctl enable vault
-sudo systemctl start vault
-sudo systemctl status vault
 ```
 
 ---
 
-## Enterprise License
+## Enterprise License ( Optional )
 
 ### Step 6: Apply Enterprise License
 
 ```bash
-# Set environment
-export VAULT_ADDR='https://< IP-Address>:8200'
+# Create environment file for all users
+sudo tee /etc/profile.d/vault.sh > /dev/null <<'EOF'
+export VAULT_ADDR='http://<your VM's IP>:8200'
 export VAULT_SKIP_VERIFY=true
+EOF
 
-# Initialize Vault (if not already done)
-vault operator init
+# Make it executable
+sudo chmod 644 /etc/profile.d/vault.sh
 
-# Unseal Vault
-vault operator unseal  # Enter key 1
-vault operator unseal  # Enter key 2
-vault operator unseal  # Enter key 3
+# Add to current user's bashrc
+echo "export VAULT_ADDR='http://<your VM's IP>:8200'" > > ~/.bashrc
 
-# Login with root token
-vault login
+# Load environment variables
+source /etc/profile.d/vault.sh
+source ~/.bashrc
 
-# Apply license (replace with your actual license string)
-vault write sys/license text="<YOUR-ENTERPRISE-LICENSE-STRING>"
-
-# Verify license
-vault read sys/license
-
-# Check license status
-vault license get
+# Verify
+echo $VAULT_ADDR
+# Expected output: http://<your VM's IP>:8200
 ```
+
+---
 
 ### Alternative: License File
 
@@ -322,8 +326,41 @@ sudo systemctl restart vault
 ```
 
 ---
+# Step 7 Start Vault Service
 
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable vault
+sudo systemctl start vault
+sudo systemctl status vault
+```
 ## Enterprise Features Configuration
+## Step 9: Configure Firewall ( Optional )
+
+```bash
+# Enable and start firewalld
+sudo systemctl enable firewalld
+sudo systemctl start firewalld
+
+# Check firewall status
+sudo firewall-cmd --state
+# Expected output: running
+
+# Open Vault API port (8200)
+sudo firewall-cmd --permanent --add-port=8200/tcp
+
+# Open Vault cluster port (8201)
+sudo firewall-cmd --permanent --add-port=8201/tcp
+
+# Reload firewall to apply changes
+sudo firewall-cmd --reload
+
+# Verify firewall rules
+sudo firewall-cmd --list-all
+# Should show ports 8200/tcp and 8201/tcp
+```
+
+---
 
 ### Namespaces
 
