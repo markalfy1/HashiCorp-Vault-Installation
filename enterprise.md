@@ -139,8 +139,10 @@ sudo chmod 644 /opt/vault/tls/vault-cert.pem
 
 ### Step 4: Configure Vault Enterprise
 
-# Create license file
+- Create license file
+
 ```bash
+
 sudo tee /etc/vault.d/vault.hclic > /dev/null <<'EOF'
 <YOUR-ENTERPRISE-LICENSE-STRING>
 EOF
