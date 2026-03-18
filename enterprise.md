@@ -55,7 +55,20 @@ This guide covers installing and configuring Vault Enterprise on RHEL 9 with adv
 - Static IP addresses for all nodes
 - Network connectivity between nodes
 - (Optional) HSM device for auto-unseal
+## Install Required Dependencies
 
+```bash
+# Install necessary packages
+sudo yum install -y wget unzip curl jq firewalld
+
+# Verify installations
+wget --version
+unzip -v
+curl --version
+jq --version
+```
+
+---
 ---
 
 ## Installation
