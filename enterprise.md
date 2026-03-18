@@ -335,7 +335,19 @@ sudo systemctl daemon-reload
 sudo systemctl enable vault
 sudo systemctl start vault
 sudo systemctl status vault
+# Should show "active (running)"
 ```
+## Verify It's Working
+
+```bash
+# Check if listening on port 8200
+sudo netstat -tlnp | grep 8200
+
+# Test Vault status (will show as sealed, which is normal)
+export VAULT_ADDR='http://<Your VM IP>:8200'
+vault status
+```
+
 ## Enterprise Features Configuration
 ## Step 9: Configure Firewall ( Optional )
 
