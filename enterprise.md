@@ -373,6 +373,36 @@ sudo firewall-cmd --reload
 sudo firewall-cmd --list-all
 # Should show ports 8200/tcp and 8201/tcp
 ```
+---
+## Step 10: Initialize Vault
+
+```bash
+# Initialize Vault (ONLY RUN ONCE!)
+vault operator init
+
+# CRITICAL: Save the output! You'll see:
+# - 5 Unseal Keys
+# - 1 Initial Root Token
+# 
+# Example output:
+# Unseal Key 1: AbCdEf1234567890...
+# Unseal Key 2: GhIjKl1234567890...
+# Unseal Key 3: MnOpQr1234567890...
+# Unseal Key 4: StUvWx1234567890...
+# Unseal Key 5: YzAbCd1234567890...
+#
+# Initial Root Token: hvs.1234567890abcdef...
+
+# SAVE THESE KEYS SECURELY! Store them in:
+# - Password manager
+# - Encrypted file
+# - Hardware security module
+# - Split among team members
+
+# You can also save to a file (SECURE THIS FILE!)
+vault operator init > ~/vault-keys.txt
+chmod 600 ~/vault-keys.txt
+```
 
 ---
 
