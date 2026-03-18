@@ -321,7 +321,7 @@ sudo chown vault:vault /etc/vault.d/vault.hclic
 sudo chmod 640 /etc/vault.d/vault.hclic
 
 # Update vault.hcl to include license_path
-# sudo sed -i '/# license_path/c\license_path = "/etc/vault.d/vault.hclic"' /etc/vault.d/vault.hcl
+sudo sed -i '/# license_path/c\license_path = "/etc/vault.d/vault.hclic"' /etc/vault.d/vault.hcl
 
 # Restart Vault
 # sudo systemctl restart vault
