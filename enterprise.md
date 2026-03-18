@@ -403,9 +403,33 @@ vault operator init
 vault operator init > ~/vault-keys.txt
 chmod 600 ~/vault-keys.txt
 ```
-
 ---
 
+## Step 11: Unseal Vault
+
+```bash
+# Vault starts in a sealed state
+# You need to unseal it with 3 of the 5 unseal keys
+
+# Unseal with first key
+vault operator unseal
+# Paste Unseal Key 1 when prompted
+
+# Unseal with second key
+vault operator unseal
+# Paste Unseal Key 2 when prompted
+
+# Unseal with third key
+vault operator unseal
+# Paste Unseal Key 3 when prompted
+
+# After the third key, Vault should be unsealed
+# Verify status
+vault status
+# Expected output: Sealed: false
+```
+
+---
 ### Namespaces
 
 ```bash
