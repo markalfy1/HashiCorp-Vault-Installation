@@ -59,13 +59,8 @@ This guide covers installing and configuring Vault Enterprise on RHEL 9 with adv
 
 ```bash
 # Install necessary packages
-sudo yum install -y wget unzip curl jq firewalld
+sudo yum install -y yum-utils
 
-# Verify installations
-wget --version
-unzip -v
-curl --version
-jq --version
 ```
 
 ---
@@ -73,31 +68,38 @@ jq --version
 
 ## Installation
 
-### Step 1: Download Vault Enterprise
+### Step 1: Install Vault Enterprise
 
 ```bash
-# Set Vault Enterprise version
-export VAULT_VERSION="1.21.4+ent"
+Add the official HashiCorp Linux repository.
 
-# Download Vault Enterprise (requires license)
-cd /tmp
-wget https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_amd64.zip
+$ sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
 
-# Or if you have a custom download URL from HashiCorp
-# wget <your-custom-enterprise-download-url>
+Install Vault.
 
-# Unzip and install
-unzip vault_${VAULT_VERSION}_linux_amd64.zip
-sudo mv vault /usr/local/bin/
-sudo chmod +x /usr/local/bin/vault
+$ sudo yum -y install vault-enterprise
 
-# Verify installation
-vault version
-# Expected: Vault v1.21.4+ent (enterprise)
+Verify Vault version
+$ vault version
 
-# Clean up
-rm vault_${VAULT_VERSION}_linux_amd64.zip
 ```
+
+### Prepare TLS certificates
+Note
+
+The installation package generates a self-signed TLS certificate for use by the Vault service to secure intra-cluster communication. While these certificates are usable for experimenting with getting Vault up and running, HashiCorp strongly recommends replacing them with certificates generated and signed by an appropriate CA.
+
+You must have three files to configure TLS for Vault. Place them at these paths:
+
+/opt/vault/tls/vault-cert.pem - The Vault TLS certificate itself
+/opt/vault/tls/vault-key.pem - The private key of the Vault TLS certificate.
+/opt/vault/tls/vault-ca.pem - The certificate of the CA root which signed the Vault TLS certificate.
+
+Or by running this command 
+$ ls /opt/vault/tls/
+
+
+
 
 ### Step 2: Create Vault User and Directories
 
