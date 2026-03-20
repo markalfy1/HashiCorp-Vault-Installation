@@ -1,35 +1,64 @@
-# Vault Server Configuration
+# Copyright IBM Corp. 2016, 2025
+# SPDX-License-Identifier: BUSL-1.1
 
-# Storage backend - file storage for single node
+# Full configuration options can be found at https://developer.hashicorp.com/vault/docs/configuration
+
+ui = true
+
+cluster_addr  = "https://<Your IP address>:8201"
+api_addr      = "https://<Your IP address>:8200"
+
+#mlock = true
+disable_mlock = true
+
 storage "file" {
   path = "/opt/vault/data"
 }
 
+#storage "consul" {
+#  address = "127.0.0.1:8500"
+#  path    = "vault"
+#}
+
 # HTTP listener
+#listener "tcp" {
+#  address = "127.0.0.1:8200"
+#  tls_disable = 1
+#}
+
+# HTTPS listener
+#listener "tcp" {
+#  address       = "0.0.0.0:8200"
+#  tls_cert_file = "/opt/vault/tls/tls.crt"
+#  tls_key_file  = "/opt/vault/tls/tls.key"
+#}
 listener "tcp" {
-  address     = "0.0.0.0:8200"
-  tls_disable = 1
+  address       = "0.0.0.0:8200"
+  tls_disable   = 0
+  tls_cert_file = "/opt/vault/tls/vault-cert.pem"
+  tls_key_file  = "/opt/vault/tls/vault-key.pem"
+  
+  # Enable telemetry
+  telemetry {
+    unauthenticated_metrics_access = true
+  }
 }
 
-# API address - replace with your VM's IP
-api_addr = "http://<your VM's IP>:8200"
+# Enterprise license_path
+# This will be required for enterprise as of v1.8
+license_path = "/opt/vault/vault.hclic"
 
-# Cluster address
-cluster_addr = "http://<your VM's IP>:8201"
+# Example AWS KMS auto unseal
+#seal "awskms" {
+#  region = "us-east-1"
+#  kms_key_id = "REPLACE-ME"
+#}
 
-# Enable UI
-ui = true
-
-# Log level
-log_level = "Info"
-disable_mlock = true
-
-# Telemetry
-telemetry {
-  disable_hostname = false
-  prometheus_retention_time = "30s"
-}
-
-# Lease configuration
-default_lease_ttl = "168h"
-max_lease_ttl = "720h"
+# Example HSM auto unseal
+#seal "pkcs11" {
+#  lib            = "/usr/vault/lib/libCryptoki2_64.so"
+#  slot           = "0"
+#  pin            = "AAAA-BBBB-CCCC-DDDD"
+#  key_label      = "vault-hsm-key"
+#  hmac_key_label = "vault-hsm-hmac-key"
+#}
